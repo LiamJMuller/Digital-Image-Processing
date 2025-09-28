@@ -13,7 +13,7 @@ oImg = im2double(oImg);
 % 3 ways to enhance the image
 % 1. Histogram Equalization
 %enhImg1 = histeq(uint8(oImg));
-engImg1=adapthisteq(oImg, 'ClipLimit',0.02);
+engImg1 = adapthisteq(oImg, 'ClipLimit',0.02);
 % 2. Contrast Stretching
 % changes the range of contrast 0-255
 min_val=min(oImg(:));
@@ -24,7 +24,7 @@ gamma=0.5; % 0.5 brighten, 2 darkens
 enhImg3=255*((oImg/255).^gamma);
 
 % selecting the best enhancement
-enhImg = enhImg1; % Histogram Equalization is the best
+enhImg = engImg1; % Histogram Equalization is the best
 
 % optionally adding colour
 enhColour = zeros(size(enhImg,1), size(enhImg,2),3);

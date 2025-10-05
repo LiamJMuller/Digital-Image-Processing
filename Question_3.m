@@ -1,12 +1,16 @@
 % importing image
-oImg = imread('Q3-Automated Screw Batch Inspection.png');
+[Img, ~, alpha] = imread('Q3-Automated Screw Batch Inspection.png');
+if size(Img, 3) == 4
+    Img = Img(:,:,1:3); % removing the alpha channel
+end
+% imshow(Img);
 
 % displaying image
-figure; imshow(oImg);
+figure; imshow(Img);
 title('Original Image');
 
 % converting to grayscale, even though image is already grayscale
-gImg = rgb2gray(oImg);
+gImg = im2gray(Img);
 
 % increasing contrast to make screws stand out more
 cImg = adapthisteq(gImg);
@@ -19,21 +23,21 @@ sImg = imsharpen(fImg, 'Radius', 2, 'Amount', 1.5);
 
 % displaying all images
 figure;
-subplot(2,2,1); imshow(oImg); title('Original image');
+subplot(2,2,1); imshow(Img); title('Original image');
 subplot(2,2,2); imshow(cImg); title('Grayscale image');
 subplot(2,2,3); imshow(fImg); title('filtered image');
 subplot(2,2,4); imshow(sImg); title('sharpened image');
 
-imwrite(enhImg, 'Q3.Enhanced Image.jpg');
+imwrite(sImg, "Q3a.Enhanced Image.jpg");
 
 % question 2
 % thrshold and segmenting the screws
 
-enhImg = imread('Q3.Enhanced Image.jpg');
+enhImg = imread('Q3a.Enhanced Image.jpg');
 
 % converting to grayscale
 if size(enhImg,3)==3
-    enhImg = rgb2gray(enhImg);
+    enhImg = im2gray(enhImg);
 else
     grayImg = enhImg;
 end
@@ -59,18 +63,18 @@ bmImg = imfill(bmImg, 'holes');
 figure; 
 subplot(1,2,1); imshow(grayImg); title('Grayscale Image');
 subplot(1,2,2); imshow(bmImg); title('Binary Mask Image');
-imwrite(bmImg, 'Q3.Binary Mask Image.jpg');
+imwrite(bmImg, 'Q3b.Binary Mask Image.jpg');
 
 % question 3
 
-binaryMask = imread('Q3.Binary Mask Image.jpg');
+binaryMask = imread('Q3b.Binary Mask Image.jpg');
 
 % just to ensure its binary
 binaryMask = imbinarize(binaryMask);
 
 % removing noise
 cleanMask = bwareaopen(binaryMask, 200);
-cleanMask = imfil(cleanMask, 'holes');
+cleanMask = imfill(cleanMask, 'holes');
 
 % smoothing the mask edges
 seImg = strel('disk', 3); % structuring element
@@ -81,11 +85,11 @@ cleanMask = imopen(cleanMask, seImg);
 figure;
 subplot(1,2,1); imshow(binaryMask); title('Binary Mask Image');
 subplot(1,2,2); imshow(cleanMask); title('Cleaned Mask Image');
-imwrite(cleanMask, 'Q3.Cleaned Mask Image.jpg');
+imwrite(cleanMask, 'Q3c.Cleaned Mask Image.jpg');
 
 % question 4
-originalImg = imread('Q3-Automated Screw Batch Inspection.png');
-cleanMask = imread('Q3.Cleaned Mask Image.jpg');
+% originalImg = imread('Q3-Automated Screw Batch Inspection.png');
+cleanMask = imread('Q3c.Cleaned Mask Image.jpg');
 
 % ensuring mask is binary
 cleanMask = imbinarize(cleanMask);
@@ -94,7 +98,7 @@ cleanMask = imbinarize(cleanMask);
 boundaries = bwboundaries(cleanMask);
 
 % display original image
-imshow(originalImg);
+imshow(Img);
 hold on;
 title('Detected Screws');
 
@@ -107,4 +111,4 @@ end
 title('Segementation outlines overlaid on original image');
 
 frame=getframe(gca);
-imwrite(frame.cdata, 'Q3.Segementation outlines overlaid on original image.jpg');
+imwrite(frame.cdata, 'Q3d.Segementation outlines overlaid on original image.jpg');

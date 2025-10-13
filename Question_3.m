@@ -32,7 +32,6 @@ imwrite(sImg, "Q3a.Enhanced Image.jpg");
 
 % question 2
 % thrshold and segmenting the screws
-
 enhImg = imread('Q3a.Enhanced Image.jpg');
 
 % converting to grayscale
@@ -46,9 +45,14 @@ end
 figure; imshow(grayImg);
 title('Grayscale Image');
 
+background = imopen(grayImg, strel('disk', 30));
+corrImg = imsubtract(grayImg, background);
+corrImg = imadjust(corrImg)
+
 % applying thresholding (chosen otsu method)
-level = graythresh(grayImg);
-bmImg = imbinarize(grayImg, level);
+% level = graythresh(corrImg);
+bmImg = imbinarize(corrImg, 'adaptive',...
+    'Sensitivity', 0.45);
 
 if mean(grayImg(bmImg)) > mean(grayImg(~bmImg))
     bmImg = ~bmImg; % inverting image if screws are black
